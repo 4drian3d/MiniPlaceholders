@@ -17,8 +17,9 @@ import me.dreamerzero.miniplaceholders.connect.InternalPlatform;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.tag.Tag;
-import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.server.MinecraftServer;
+
+import com.destroystokyo.paper.event.brigadier.CommandRegisteredEvent;
+import com.destroystokyo.paper.brigadier.BukkitBrigadierCommandSource;
 
 public final class PaperPlugin extends JavaPlugin implements PlaceholdersPlugin, Listener {
     private final DecimalFormat tpsFormat = new DecimalFormat("###.##");
@@ -28,7 +29,6 @@ public final class PaperPlugin extends JavaPlugin implements PlaceholdersPlugin,
     public void onEnable(){
         this.getSLF4JLogger().info("Starting MiniPlaceholders Paper");
         InternalPlatform.platform(InternalPlatform.PAPER);
-        this.getServer().getPluginManager().registerEvents(this, this);
 
         tpsFormat.setRoundingMode(RoundingMode.HALF_UP);
         msptFormat.setRoundingMode(RoundingMode.HALF_UP);
@@ -76,17 +76,21 @@ public final class PaperPlugin extends JavaPlugin implements PlaceholdersPlugin,
         .register();
     }
 
-    @Override
-    @SuppressWarnings({"sonarlint(java:s1874)", "deprecation", /*TODO: replace with Java(536871800) */ "all"})
-    public void registerPlatformCommand() {
-        MinecraftServer.getServer()
-            .vanillaCommandDispatcher
-            .getDispatcher()
-            .register(new PlaceholdersCommand<>(
+    private final LiteralCommandNode<BukkitBrigadierCommandSource> command = new PlaceholdersCommand<>(
                     () -> this.getServer().getOnlinePlayers().stream().map(Player::getName).toList(),
                     (String st) -> this.getServer().getPlayer(st),
-                    CommandSourceStack::getBukkitSender
-                ).placeholderTestBuilder("miniplaceholders")
-            );
+                    BukkitBrigadierCommandSource::getBukkitSender
+                ).placeholderTestBuilder("miniplaceholders");
+
+    @Override
+    public void registerPlatformCommand() {
+        getServer().getPluginManager().registerEvents(this, this);
+    }
+
+    @EventHandler
+    public void onCommandRegister(CommandRegisteredEvent<S extends BukkitBrigadierCommandSource> event) {
+       if (!event.getCommandLabel().equals("miniplaceholders")) return;
+
+       event.setLiteral(command);
     }
 }
