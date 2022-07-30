@@ -83,7 +83,7 @@ public final class PaperPlugin extends JavaPlugin implements PlaceholdersPlugin,
                     () -> this.getServer().getOnlinePlayers().stream().map(Player::getName).toList(),
                     (String st) -> this.getServer().getPlayer(st),
                     BukkitBrigadierCommandSource::getBukkitSender
-                ).placeholderTestBuilder("miniplaceholders");
+                ).placeholderTestCommand("miniplaceholders");
 
     @Override
     public void registerPlatformCommand() {
