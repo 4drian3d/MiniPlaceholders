@@ -9,8 +9,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.event.EventHandler;
 
-import com.mojang.brigadier.tree.LiteralCommandNode;
-
 import io.papermc.paper.datapack.Datapack;
 import me.dreamerzero.miniplaceholders.api.Expansion;
 import me.dreamerzero.miniplaceholders.api.utils.TagsUtils;
@@ -21,7 +19,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 
-import com.destroystokyo.paper.event.brigadier.CommandRegisteredEvent;
 import com.destroystokyo.paper.brigadier.BukkitBrigadierCommandSource;
 
 public final class PaperPlugin extends JavaPlugin implements PlaceholdersPlugin, Listener {
@@ -84,16 +81,21 @@ public final class PaperPlugin extends JavaPlugin implements PlaceholdersPlugin,
         getServer().getPluginManager().registerEvents(this, this);
     }
 
+    private boolean registered = false;
+
     @EventHandler(ignoreCancelled = true)
-    public void onCommandRegister(CommandRegisteredEvent<? extends BukkitBrigadierCommandSource> event) {
-       if (event.getCommandLabel().equals("miniplaceholders") || event.getCommandLabel().equals("miniplaceholders:miniplaceholders"))
-           event.setLiteral(new PlaceholdersCommand<>(
-                    () -> this.getServer().getOnlinePlayers()
-                        .stream()
-                        .map(Player::getName)
-                        .toList(),
-                    (st) -> this.getServer().getPlayer(st),
-                    BukkitBrigadierCommandSource::getBukkitSender
-                ).placeholderTestCommand("miniplaceholders"));
+    @SuppressWarnings("deprecation")
+    public <S extends BukkitBrigadierCommandSource> void onCommandRegister(com.destroystokyo.paper.event.brigadier.CommandRegisteredEvent<S> event) {
+        if (!registered) {
+            event.getRoot().addChild(new PlaceholdersCommand<>(
+                () -> this.getServer().getOnlinePlayers()
+                    .stream()
+                    .map(Player::getName)
+                    .toList(),
+                (st) -> this.getServer().getPlayer(st),
+                (S s) -> s.getBukkitSender()
+            ).placeholderTestCommand("miniplaceholders"));
+            registered = true;
+        }
     }
 }

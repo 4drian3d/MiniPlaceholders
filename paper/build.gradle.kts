@@ -20,12 +20,6 @@ bukkit {
     website = "https://github.com/4drian3d/MiniPlaceholders"
     authors = listOf("4drian3d")
     version = pluginVersion
-    commands {
-        register("miniplaceholders") {
-            description = "MiniPlaceholders Command"
-            permission = "miniplaceholders.command"
-        }
-    }
 }
 
 java.toolchain.languageVersion.set(JavaLanguageVersion.of(17))
