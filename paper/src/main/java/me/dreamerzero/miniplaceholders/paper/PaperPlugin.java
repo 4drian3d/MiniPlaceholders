@@ -79,12 +79,6 @@ public final class PaperPlugin extends JavaPlugin implements PlaceholdersPlugin,
         .register();
     }
 
-    private final LiteralCommandNode<? extends BukkitBrigadierCommandSource> command = new PlaceholdersCommand<>(
-                    () -> this.getServer().getOnlinePlayers().stream().map(Player::getName).toList(),
-                    (String st) -> this.getServer().getPlayer(st),
-                    BukkitBrigadierCommandSource::getBukkitSender
-                ).placeholderTestCommand("miniplaceholders");
-
     @Override
     public void registerPlatformCommand() {
         getServer().getPluginManager().registerEvents(this, this);
@@ -93,6 +87,13 @@ public final class PaperPlugin extends JavaPlugin implements PlaceholdersPlugin,
     @EventHandler(ignoreCancelled = true)
     public void onCommandRegister(CommandRegisteredEvent<? extends BukkitBrigadierCommandSource> event) {
        if (event.getCommandLabel().equals("miniplaceholders") || event.getCommandLabel().equals("miniplaceholders:miniplaceholders"))
-           event.setLiteral(command);
+           event.setLiteral(new PlaceholdersCommand<>(
+                    () -> this.getServer().getOnlinePlayers()
+                        .stream()
+                        .map(Player::getName)
+                        .toList(),
+                    (st) -> this.getServer().getPlayer(st),
+                    BukkitBrigadierCommandSource::getBukkitSender
+                ).placeholderTestCommand("miniplaceholders"));
     }
 }
