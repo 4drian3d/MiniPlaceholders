@@ -7,6 +7,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.event.EventHandler;
 
 import io.papermc.paper.datapack.Datapack;
 import me.dreamerzero.miniplaceholders.api.Expansion;
@@ -87,7 +88,7 @@ public final class PaperPlugin extends JavaPlugin implements PlaceholdersPlugin,
         getServer().getPluginManager().registerEvents(this, this);
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onCommandRegister(CommandRegisteredEvent<BukkitBrigadierCommandSource> event) {
        if (!event.getCommandLabel().equals("miniplaceholders")) return;
 
