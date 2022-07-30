@@ -91,8 +91,8 @@ public final class PaperPlugin extends JavaPlugin implements PlaceholdersPlugin,
     }
 
     @EventHandler(ignoreCancelled = true)
-    public void onCommandRegister(CommandRegisteredEvent<BukkitBrigadierCommandSource> event) {
-       if (!event.getCommandLabel().equals("miniplaceholders")) return;
+    public void onCommandRegister(CommandRegisteredEvent<? extends BukkitBrigadierCommandSource> event) {
+       if (!event.getCommandLabel().equals("miniplaceholders") || event.getCommandLabel().equals("miniplaceholders:miniplaceholders")) return;
 
        event.setLiteral(command);
     }
