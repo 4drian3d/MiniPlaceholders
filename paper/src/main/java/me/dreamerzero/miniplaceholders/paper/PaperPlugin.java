@@ -79,7 +79,7 @@ public final class PaperPlugin extends JavaPlugin implements PlaceholdersPlugin,
         .register();
     }
 
-    private final LiteralCommandNode<BukkitBrigadierCommandSource> command = new PlaceholdersCommand<>(
+    private final LiteralCommandNode<? extends BukkitBrigadierCommandSource> command = new PlaceholdersCommand<>(
                     () -> this.getServer().getOnlinePlayers().stream().map(Player::getName).toList(),
                     (String st) -> this.getServer().getPlayer(st),
                     BukkitBrigadierCommandSource::getBukkitSender
