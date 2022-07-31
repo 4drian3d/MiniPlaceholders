@@ -70,6 +70,10 @@ public class PlaceholdersCommand<A> {
                 return 1;
             })
             .then(LiteralArgumentBuilder.<A>literal("help")
+                .requires(cmd -> getAudience(cmd)
+                    .get(PermissionChecker.POINTER)
+                    .map(a -> a.test("miniplaceholders.command.help"))
+                    .orElse(false))
                 .executes(cmd -> {
                     getAudience(cmd.getSource()).sendMessage(
                         Component.text()
@@ -84,6 +88,10 @@ public class PlaceholdersCommand<A> {
                 })
             )
             .then(LiteralArgumentBuilder.<A>literal("parse")
+                .requires(cmd -> getAudience(cmd)
+                    .get(PermissionChecker.POINTER)
+                    .map(a -> a.test("miniplaceholders.command.parse"))
+                    .orElse(false))
                 .then(LiteralArgumentBuilder.<A>literal("me")
                     .then(RequiredArgumentBuilder.<A, String>argument("selfStringToParse", StringArgumentType.string())
                         .executes(cmd -> {
@@ -134,7 +142,7 @@ public class PlaceholdersCommand<A> {
     }
 
     private Audience getAudience(A possibleAudience){
-        if(possibleAudience instanceof Audience audience){
+        if (possibleAudience instanceof Audience audience){
             return audience;
         }
         Audience audience = fromAToAudience.apply(possibleAudience);

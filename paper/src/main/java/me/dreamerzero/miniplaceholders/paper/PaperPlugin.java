@@ -81,21 +81,18 @@ public final class PaperPlugin extends JavaPlugin implements PlaceholdersPlugin,
         getServer().getPluginManager().registerEvents(this, this);
     }
 
-    private boolean registered = false;
-
     @EventHandler(ignoreCancelled = true)
     @SuppressWarnings("deprecation")
     public <S extends BukkitBrigadierCommandSource> void onCommandRegister(com.destroystokyo.paper.event.brigadier.CommandRegisteredEvent<S> event) {
-        if (!registered) {
-            event.getRoot().addChild(new PlaceholdersCommand<>(
+        if (event.getCommandLabel().equals("miniplaceholders") || event.getCommandLabel().equals("miniplaceholders:miniplaceholders")) {
+            event.setLiteral(new PlaceholdersCommand<>(
                 () -> this.getServer().getOnlinePlayers()
                     .stream()
                     .map(Player::getName)
                     .toList(),
-                (st) -> this.getServer().getPlayer(st),
+                this.getServer()::getPlayer,
                 (S s) -> s.getBukkitSender()
             ).placeholderTestCommand("miniplaceholders"));
-            registered = true;
         }
     }
 }
